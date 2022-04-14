@@ -175,50 +175,50 @@ public class CoursesViewerTest {
         Assertions.assertEquals(courseFromDB, course1, "Course not found.");
     }
 
-     @Test
-     public void viewStudentsTest() {
-         targetUrl = "students/";
+    @Test
+    public void viewStudentsTest() {
+        targetUrl = "students/";
 
-         WebTarget target = client.target(baseUrl + targetUrl);
-         Response response = target.request().get();
-         System.out.println("response: " + response.readEntity(String.class));
+        WebTarget target = client.target(baseUrl + targetUrl);
+        Response response = target.request().get();
+        System.out.println("response: " + response.readEntity(String.class));
 
-         List studentObjects = jsonb.fromJson(response.readEntity(String.class), ArrayList.class);
-         ArrayList<StudentDAO> students = new ArrayList<>();
+        List studentObjects = jsonb.fromJson(response.readEntity(String.class), ArrayList.class);
+        ArrayList<StudentDAO> students = new ArrayList<>();
 
-         for (Object o : studentObjects) {
-             HashMap mapO = (HashMap) o;
-             students.add(new StudentDAO(
-                     (String) mapO.get("student_id")
-             ));
-         }
+        for (Object o : studentObjects) {
+            HashMap mapO = (HashMap) o;
+            students.add(new StudentDAO(
+                    (String) mapO.get("student_id")
+            ));
+        }
 
-         ArrayList<StudentDAO> actualStudents = new ArrayList<>();
+        ArrayList<StudentDAO> actualStudents = new ArrayList<>();
 
-         // compare the courses we made before to the courses in the database.
-         // This should NOT work if we entered anything funky that could mess things up db side...
-         students.forEach(student -> {
-             for (StudentDAO sD : expectedStudents) {
-                 if (sD.studentID.equals(student.studentID))
-                     actualStudents.add(sD);
-             }
-         });
+        // compare the courses we made before to the courses in the database.
+        // This should NOT work if we entered anything funky that could mess things up db side...
+        students.forEach(student -> {
+            for (StudentDAO sD : expectedStudents) {
+                if (sD.studentID.equals(student.studentID))
+                    actualStudents.add(sD);
+            }
+        });
 
-         // test passes if the courses were successfully entered into the db
-         Assertions.assertEquals(expectedStudents.size(), actualStudents.size(), "Not all students were retrieved.");
-     }
+        // test passes if the courses were successfully entered into the db
+        Assertions.assertEquals(expectedStudents.size(), actualStudents.size(), "Not all students were retrieved.");
+    }
 
-     @Test
-     public void viewSpecificStudentTest() {
-         targetUrl = "students/"+ student1.studentID +"/";
-         WebTarget target = client.target(baseUrl + targetUrl);
-         Response response = target.request().get();
-         System.out.println("response: " + response.readEntity(String.class));
-         Object o = jsonb.fromJson(response.readEntity(String.class), Object.class);
-         HashMap mapO = (HashMap) o;
-         StudentDAO studentFromDB = new StudentDAO(
-                 (String) mapO.get("student_id")
-         );
-         Assertions.assertEquals(studentFromDB.studentID, student1.studentID, "Student not found.");
-     }
+    @Test
+    public void viewSpecificStudentTest() {
+        targetUrl = "students/"+ student1.studentID +"/";
+        WebTarget target = client.target(baseUrl + targetUrl);
+        Response response = target.request().get();
+        System.out.println("response: " + response.readEntity(String.class));
+        Object o = jsonb.fromJson(response.readEntity(String.class), Object.class);
+        HashMap mapO = (HashMap) o;
+        StudentDAO studentFromDB = new StudentDAO(
+                (String) mapO.get("student_id")
+        );
+        Assertions.assertEquals(studentFromDB.studentID, student1.studentID, "Student not found.");
+    }
 }
